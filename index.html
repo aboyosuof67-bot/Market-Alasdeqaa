@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ماركت الأصدقاء - الحي العاشر</title>
+    <meta name="description" content="اطلب احتياجاتك من ماركت الأصدقاء في الحي العاشر، العاشر من رمضان، واستلم طلبك بالتوصيل.">
+    <meta name="theme-color" content="#047857">
+    <link rel="manifest" href="site.webmanifest">
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Font Cairo -->
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <script src="js/tailwind-config.js"></script>
+    <link rel="stylesheet" href="css/styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/supabase-config.js"></script>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col">
+
+    <!-- Top Bar / Navbar -->
+    <header class="bg-marketGreen-700 text-white shadow-md sticky top-0 z-40">
+        <div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="bg-white text-marketGreen-700 p-2.5 rounded-2xl shadow font-black text-xl flex items-center justify-center">
+                    <i class="fa-solid fa-store"></i>
+                </div>
+                <div>
+                    <h1 class="text-lg md:text-xl font-black tracking-wide">ماركت الأصدقاء</h1>
+                    <p class="text-xs text-marketGreen-100 flex items-center gap-1">
+                        <i class="fa-solid fa-location-dot"></i> الحي العاشر، العاشر من رمضان
+                    </p>
+                </div>
+            </div>
+
+            <!-- Header Actions -->
+            <div class="flex items-center gap-2">
+                <!-- Cart Button -->
+                <button onclick="toggleCartModal()" class="bg-white text-marketGreen-700 px-4 py-2 rounded-xl font-bold flex items-center gap-2 shadow hover:bg-marketGreen-50 transition relative">
+                    <i class="fa-solid fa-cart-shopping text-lg"></i>
+                    <span class="hidden sm:inline">السلة</span>
+                    <span id="cart-badge" class="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-black w-6 h-6 rounded-full flex items-center justify-center shadow-md animate-bounce">0</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero & Search Section -->
+    <section class="bg-gradient-to-br from-marketGreen-700 to-emerald-900 text-white py-8 px-4 shadow-lg mb-6">
+        <div class="max-w-4xl mx-auto text-center space-y-4">
+            <h2 class="text-2xl md:text-4xl font-black">أهلاً بك في ماركت الأصدقاء 🛒</h2>
+            <p class="text-sm md:text-base text-emerald-100 max-w-xl mx-auto">
+                جميع احتياجات بيتك ودكانك بأفضل الأسعار وتوصيل سريع في الحي العاشر - العاشر من رمضان. اطلب بسهولة عبر الواتساب!
+            </p>
+            <a href="https://www.google.com/maps/dir/?api=1&amp;destination=%D9%85%D8%A7%D8%B1%D9%83%D8%AA%20%D8%A7%D9%84%D8%A3%D8%B5%D8%AF%D9%82%D8%A7%D8%A1%D8%8C%20%D8%A7%D9%84%D8%AD%D9%8A%20%D8%A7%D9%84%D8%B9%D8%A7%D8%B4%D8%B1%D8%8C%20%D8%A8%D8%AC%D9%88%D8%A7%D8%B1%20%D8%A7%D9%84%D9%85%D9%88%D9%82%D9%81%D8%8C%20%D8%A7%D9%84%D8%B9%D8%A7%D8%B4%D8%B1%20%D9%85%D9%86%20%D8%B1%D9%85%D8%B6%D8%A7%D9%86%D8%8C%20%D9%85%D8%B5%D8%B1" target="_blank" rel="noopener noreferrer" aria-label="ابدأ الاتجاهات إلى ماركت الأصدقاء على خرائط Google" class="inline-flex items-center justify-center gap-2 rounded-xl bg-white px-5 py-3 font-bold text-marketGreen-700 shadow-lg transition hover:bg-emerald-50 focus:outline-none focus:ring-4 focus:ring-emerald-300">
+                <i class="fa-solid fa-map-location-dot" aria-hidden="true"></i>
+                <span>اعرف طريقك للمحل</span>
+            </a>
+            
+            <!-- Search Bar -->
+            <div class="relative max-w-xl mx-auto mt-4">
+                <span class="absolute inset-y-0 right-0 flex items-center pr-4 pointer-events-none text-slate-400">
+                    <i class="fa-solid fa-magnifying-glass text-lg"></i>
+                </span>
+                <input type="text" id="search-input" oninput="filterProducts()" placeholder="ابحث عن أي منتج (ألبان، بسكويت، زيوت، مشروبات...)..." class="w-full pr-12 pl-4 py-3.5 rounded-2xl text-slate-800 bg-white shadow-xl focus:outline-none focus:ring-4 focus:ring-emerald-400 font-medium placeholder-slate-400 text-sm md:text-base">
+            </div>
+        </div>
+    </section>
+
+    <!-- Categories -->
+    <main class="max-w-7xl mx-auto px-4 flex-grow w-full mb-16">
+        <div class="flex flex-wrap items-center justify-between gap-3 mb-4">
+            <h3 class="text-2xl font-bold text-slate-800">الأقسام</h3>
+            <div class="flex items-center gap-3">
+                <span id="product-count" class="text-xs font-bold bg-slate-200 text-slate-600 px-3 py-1 rounded-full">0 منتج</span>
+                <button id="all-categories-button" onclick="setCategory('الكل')" aria-pressed="true" class="text-sm font-bold text-marketGreen-700 hover:text-marketGreen-800 transition">
+                    كل المنتجات
+                </button>
+            </div>
+        </div>
+
+        <div id="categories-container" class="category-grid">
+            <!-- Category cards are rendered dynamically -->
+        </div>
+
+        <section class="mt-10 mb-8">
+            <div class="flex items-center gap-2 mb-4">
+                <i class="fa-solid fa-video text-emerald-600"></i>
+                <h3 class="text-xl font-black text-slate-800">الفيديوهات</h3>
+            </div>
+            <div id="videos-container" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+                <!-- Videos rendered dynamically -->
+            </div>
+        </section>
+
+        <div class="flex items-center justify-between mt-8 mb-4">
+            <h3 class="text-lg font-bold text-slate-700 flex items-center gap-2">
+                <i class="fa-solid fa-bag-shopping text-marketGreen-600"></i>
+                <span id="products-heading">المنتجات المتوفرة</span>
+            </h3>
+        </div>
+        <div id="products-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+            <!-- Products rendered dynamically -->
+        </div>
+
+        <div id="empty-state" class="hidden text-center py-16">
+            <div class="text-6xl text-slate-300 mb-3"><i class="fa-solid fa-box-open"></i></div>
+            <p class="text-slate-500 font-bold text-lg">عذراً، لم نجد منتجات تطابق بحثك.</p>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-slate-800 text-slate-300 py-8 px-4 mt-auto border-t border-slate-700">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4 text-center md:text-right">
+            <div>
+                <h4 class="text-white font-bold text-lg mb-1">ماركت الأصدقاء</h4>
+                <p class="text-xs text-slate-400">الحي العاشر - بجوار الموقف - العاشر من رمضان</p>
+                <a href="https://www.google.com/maps/dir/?api=1&amp;destination=%D9%85%D8%A7%D8%B1%D9%83%D8%AA%20%D8%A7%D9%84%D8%A3%D8%B5%D8%AF%D9%82%D8%A7%D8%A1%D8%8C%20%D8%A7%D9%84%D8%AD%D9%8A%20%D8%A7%D9%84%D8%B9%D8%A7%D8%B4%D8%B1%D8%8C%20%D8%A8%D8%AC%D9%88%D8%A7%D8%B1%20%D8%A7%D9%84%D9%85%D9%88%D9%82%D9%81%D8%8C%20%D8%A7%D9%84%D8%B9%D8%A7%D8%B4%D8%B1%20%D9%85%D9%86%20%D8%B1%D9%85%D8%B6%D8%A7%D9%86%D8%8C%20%D9%85%D8%B5%D8%B1" target="_blank" rel="noopener noreferrer" class="mt-2 inline-flex items-center gap-2 text-sm font-bold text-emerald-400 hover:text-emerald-300">
+                    <i class="fa-solid fa-diamond-turn-right" aria-hidden="true"></i>
+                    <span>الاتجاهات على خرائط Google</span>
+                </a>
+            </div>
+            <div class="text-xs text-slate-400">
+                <p>رقم التواصل والواتساب الرسمي: <span class="text-emerald-400 font-bold">01206315006</span></p>
+                <p class="mt-1">جميع الحقوق محفوظة © 2026</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Cart Modal / Drawer -->
+    <div id="cart-modal" class="fixed inset-0 bg-black/60 z-50 hidden flex justify-end backdrop-blur-sm transition-opacity">
+        <div class="bg-white w-full max-w-md h-full flex flex-col shadow-2xl animate-in slide-in-from-left duration-300">
+            <!-- Modal Header -->
+            <div class="p-4 bg-marketGreen-700 text-white flex items-center justify-between shadow">
+                <h3 class="font-bold text-lg flex items-center gap-2">
+                    <i class="fa-solid fa-cart-shopping"></i> سلة المشتريات
+                </h3>
+                <button onclick="toggleCartModal()" class="text-white hover:bg-marketGreen-600 p-2 rounded-xl transition">
+                    <i class="fa-solid fa-xmark text-xl"></i>
+                </button>
+            </div>
+
+            <!-- Cart Items List -->
+            <div id="cart-items" class="flex-grow overflow-y-auto p-4 space-y-3 divide-y divide-slate-100">
+                <!-- Cart items populated via JS -->
+            </div>
+
+            <!-- Cart Footer -->
+            <div class="p-4 bg-slate-50 border-t border-slate-200 space-y-3">
+                <div class="flex justify-between items-center text-lg font-black text-slate-800">
+                    <span>الإجمالي الكلي:</span>
+                    <span id="cart-total" class="text-marketGreen-700">0 ج.م</span>
+                </div>
+
+                <div class="space-y-2">
+                    <input type="text" id="customer-name" required placeholder="اسم حضرتك (مطلوب)..." class="w-full px-3 py-2 rounded-xl border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-marketGreen-500">
+                    <textarea id="customer-address" required placeholder="عنوان التوصيل بالحي العاشر (مطلوب: رقم المجاورة، العمارة، الشقة)..." class="w-full px-3 py-2 rounded-xl border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-marketGreen-500 resize-none h-20"></textarea>
+                </div>
+
+                <fieldset class="space-y-2">
+                    <legend class="text-sm font-bold text-slate-700">طريقة الدفع</legend>
+                    <label class="flex items-center gap-2 p-3 rounded-xl border border-slate-200 cursor-pointer hover:bg-slate-50">
+                        <input type="radio" name="payment-method" value="cash" checked class="accent-emerald-600">
+                        <span class="text-sm font-semibold text-slate-700">الدفع عند الاستلام</span>
+                    </label>
+                    <label class="flex items-center gap-2 p-3 rounded-xl border border-slate-200 cursor-pointer hover:bg-slate-50">
+                        <input type="radio" name="payment-method" value="vodafone-cash" class="accent-emerald-600">
+                        <span class="text-sm font-semibold text-slate-700">فودافون كاش</span>
+                    </label>
+                    <p id="vodafone-cash-details" class="hidden rounded-xl bg-red-50 p-3 text-sm text-red-800">
+                        حوّل المبلغ إلى محفظة فودافون كاش: <strong dir="ltr">01206315006</strong>.
+                        سيتم تأكيد التحويل يدويًا بعد إرسال الطلب.
+                    </p>
+                </fieldset>
+
+                <button onclick="checkoutWhatsApp()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white py-3.5 rounded-2xl font-bold flex items-center justify-center gap-2 shadow-lg transition transform active:scale-95 text-base">
+                    <i class="fa-brands fa-whatsapp text-2xl"></i> إرسال الطلب عبر الواتساب (01206315006)
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Admin Dashboard Modal -->
+    <div id="admin-dashboard-modal" class="fixed inset-0 bg-black/70 z-50 hidden flex items-center justify-center p-2 sm:p-4 backdrop-blur-sm">
+        <div class="bg-white w-full max-w-4xl h-[90vh] rounded-3xl shadow-2xl flex flex-col overflow-hidden">
+            <!-- Dashboard Header -->
+            <div class="bg-slate-900 text-white p-4 flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                    <i class="fa-solid fa-sliders text-emerald-400"></i>
+                    <h3 class="font-bold text-lg">لوحة تحكم وإدارة الأسعار والمنتجات</h3>
+                </div>
+                <button onclick="closeAdminDashboard()" class="text-slate-400 hover:text-white p-2 rounded-xl transition">
+                    <i class="fa-solid fa-xmark text-xl"></i>
+                </button>
+            </div>
+
+            <!-- Dashboard Content Tabs / Sections -->
+            <div class="flex-grow overflow-y-auto p-4 md:p-6 space-y-6 bg-slate-100">
+                <div class="bg-amber-100 border border-amber-300 text-amber-900 p-4 rounded-2xl text-sm font-bold" role="status">
+                    الإدارة مفتوحة بدون كلمة مرور. التعديلات تُحفظ على هذا الجهاز فقط ولا تظهر للعملاء أو على أجهزة أخرى.
+                </div>
+                
+                <!-- Add New Product Form Card -->
+                <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 space-y-4">
+                    <h4 class="font-bold text-slate-800 text-base flex items-center gap-2">
+                        <i class="fa-solid fa-plus-circle text-marketGreen-600"></i> إضافة منتج جديد
+                    </h4>
+                    <form id="add-product-form" onsubmit="handleAddNewProduct(event)" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
+                        <input type="text" id="new-name" placeholder="اسم الصنف (مثال: جبنة رومي)" required class="px-3 py-2.5 rounded-xl border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-marketGreen-500">
+                        <select id="new-category" required class="px-3 py-2.5 rounded-xl border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-marketGreen-500 bg-white">
+                            <option value="ألبان وأجبان">ألبان- وأجبان</option>
+                            <option value="بقوليات ومعلبات">بقوليات ومعلبات</option>
+                            <option value="مشروبات وعصائر">مشروبات وعصائر</option>
+                            <option value="منظفات وعناية">منظفات وعناية</option>
+                            <option value="سناكس ومقرمشات">سناكس ومقرمشات</option>
+                            <option value="سكر ودقيق وأرز">سكر ودقيق وأرز</option>
+                            <option value="مشروبات غازية">مشروبات غازية</option>
+                            <option value="مشروبات طاقة">مشروبات طاقة</option>
+                            <option value="لبان وحلويات">لبان وحلويات</option>
+                            <option value="بسكويت">بسكويت</option>
+                            <option value="عصائر">عصائر</option>
+                            <option value="زيوت">زيوت</option>
+                            <option value="عناية منزلية">عناية منزلية</option>
+                            <option value="كيك وكرواسون">كيك وكرواسون</option>
+                            <option value="سايب">سايب</option>
+                            <option value="بقوليات">بقوليات</option>
+                            <option value="سمنات">سمنات</option>
+                            <option value="شاي وبن">شاي وبن</option>
+                            <option value="مياه معدنية">مياه معدنية</option>
+                            <option value="مشروبات شعير">مشروبات شعير</option>
+                            <option value="بلح وتمور">بلح وتمور</option>
+                            <option value="بلح وتمر">بلح وتمر</option>
+                            <option value="مشروبات ساخنة">مشروبات ساخنة</option>
+                            <option value="قهوة سريعة التحضير">قهوة سريعة التحضير</option>
+                            <option value="صابون سائل">صابون سائل</option>
+                            <option value="مقرمشات">مقرمشات</option>
+                            <option value="شيكولاتة">شيكولاتة</option>
+                            <option value="صابون أيدي">صابون أيدي</option>
+                            <option value="عناية شخصية">عناية شخصية</option>
+                            <option value="منظفات ملابس">منظفات ملابس</option>
+                            <option value="مستحضرات">مستحضرات</option>
+                            <option value="حفاظات وفوط صحية">حفاظات وفوط صحية</option>
+                            <option value="ورقيات">ورقيات</option>
+                            <option value="لحوم مجمدة">لحوم مجمدة</option>
+                            <option value="أسماك مجمدة">أسماك مجمدة</option>
+                        </select>
+                        <input type="number" step="0.5" id="new-price" placeholder="السعر (ج.م)" required class="px-3 py-2.5 rounded-xl border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-marketGreen-500">
+                        <input type="file" id="new-image" accept="image/*" required aria-label="تحميل صورة المنتج" class="px-3 py-2.5 rounded-xl border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-marketGreen-500">
+                        <div class="sm:col-span-2 md:col-span-4 flex justify-end">
+                            <button type="submit" class="bg-marketGreen-600 hover:bg-marketGreen-700 text-white font-bold px-6 py-2.5 rounded-xl text-sm shadow transition">
+                                <i class="fa-solid fa-check ml-1"></i> حفظ وإضافة المنتج
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 space-y-4">
+                    <h4 class="font-bold text-slate-800 text-base flex items-center gap-2">
+                        <i class="fa-solid fa-video text-marketGreen-600"></i> رفع فيديو جديد
+                    </h4>
+                    <form id="add-video-form" onsubmit="handleAddNewVideo(event)" class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                        <input type="text" id="new-video-title" placeholder="عنوان الفيديو" required class="px-3 py-2.5 rounded-xl border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-marketGreen-500">
+                        <input type="file" id="new-video-file" accept="video/*" required aria-label="تحميل فيديو" class="px-3 py-2.5 rounded-xl border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-marketGreen-500">
+                        <div class="flex justify-end">
+                            <button type="submit" class="bg-marketGreen-600 hover:bg-marketGreen-700 text-white font-bold px-6 py-2.5 rounded-xl text-sm shadow transition">
+                                <i class="fa-solid fa-upload ml-1"></i> حفظ الفيديو
+                            </button>
+                        </div>
+                    </form>
+
+                    <div class="flex justify-between items-center">
+                        <h4 class="font-bold text-slate-800 text-base flex items-center gap-2">
+                            <i class="fa-solid fa-film text-marketGreen-600"></i> الفيديوهات الحالية
+                        </h4>
+                        <button onclick="clearAllLocalVideos()" class="text-xs bg-red-50 text-red-600 hover:bg-red-100 font-bold px-3 py-1.5 rounded-lg border border-red-200 transition">
+                            <i class="fa-solid fa-trash ml-1"></i> حذف كل الفيديوهات
+                        </button>
+                    </div>
+                    <div id="admin-videos-list" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3">
+                        <!-- Videos list populated dynamically -->
+                    </div>
+                </div>
+
+                <!-- Existing Products Management Table/List -->
+                <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 space-y-4">
+                    <div class="flex justify-between items-center">
+                        <h4 class="font-bold text-slate-800 text-base flex items-center gap-2">
+                            <i class="fa-solid fa-list-check text-marketGreen-600"></i> تعديل وحذف المنتجات الحالية
+                        </h4>
+                        <button onclick="clearAllLocalProducts()" class="text-xs bg-red-50 text-red-600 hover:bg-red-100 font-bold px-3 py-1.5 rounded-lg border border-red-200 transition">
+                            <i class="fa-solid fa-trash ml-1"></i> حذف كل الأصناف
+                        </button>
+                    </div>
+
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-right border-collapse text-sm">
+                            <thead>
+                                <tr class="bg-slate-100 text-slate-600 border-b border-slate-200">
+                                    <th class="p-3">الصنف</th>
+                                    <th class="p-3">القسم</th>
+                                    <th class="p-3">السعر (ج.م)</th>
+                                    <th class="p-3 text-center">الإجراءات</th>
+                                </tr>
+                            </thead>
+                            <tbody id="admin-products-table" class="divide-y divide-slate-100">
+                                <!-- Populated dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Dashboard Footer -->
+            <div class="p-4 bg-white border-t border-slate-200 flex justify-end">
+                <button onclick="closeAdminDashboard()" class="bg-slate-800 hover:bg-slate-900 text-white font-bold px-6 py-2.5 rounded-xl text-sm transition">إغلاق لوحة التحكم</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Custom Toast Notification -->
+    <div id="toast" class="fixed bottom-5 right-5 bg-slate-900 text-white px-5 py-3 rounded-2xl shadow-2xl z-50 transform translate-y-24 opacity-0 transition-all duration-300 flex items-center gap-3">
+        <i id="toast-icon" class="fa-solid fa-circle-check text-emerald-400 text-xl"></i>
+        <span id="toast-msg" class="text-sm font-bold">تمت العملية بنجاح</span>
+    </div>
+
+    <script src="js/products.js"></script>
+    <script src="js/storefront.js"></script>
+    <script src="js/cart.js"></script>
+    <script src="js/checkout.js"></script>
+    <script src="js/admin-auth.js"></script>
+    <script src="js/admin-products.js"></script>
+    <script src="js/notifications.js"></script>
+    <script>
+        if ("serviceWorker" in navigator && location.protocol.startsWith("http")) {
+            window.addEventListener("load", () => {
+                navigator.serviceWorker.register("sw.js").catch(error => {
+                    console.error("تعذر تسجيل عامل الخدمة:", error);
+                });
+            });
+        }
+    </script>
+</body>
+</html>
